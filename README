@@ -1,0 +1,23 @@
+Mirror Readme
+=============
+
+The Mirror utility can be used to mirror local directories on remote
+servers over SFTP using WinSCP. When run, this utility will fork a
+WinSCP process for each project directory listed in config.json. These
+WinSCP processes will monitor the project directory that they are
+associated with for any changes and immediately sync them with the
+associated remote directory.
+
+This utility was created as part of Elucid's Standard Dev Environment
+specification.
+
+Known Issues
+============
+
+The current version of this utility does not close the WinSCP processes
+that it spawns when terminated. These have to be terminated seperately.
+
+Author
+======
+
+Larry Lee <larry_lee@elucidsolutions.com>
