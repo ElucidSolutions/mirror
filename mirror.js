@@ -18,7 +18,7 @@ var mirror = function () {
   getConfig (function (config) {
     console.log ('Configuration: ' + JSON.stringify (config));
     config.projects.forEach (function (project) {
-      var cmd = '"' + config.winscp + '" /command "open sftp://' + project.user + '@' + project.host + ' -privatekey=""' + project.ppkpath + '""" "keepuptodate ""' + project.localpath + '"" ""' + project.remotepath + '"" -filemask=""|.git"" -delete"';
+      var cmd = '"' + config.winscp + '" /command "open sftp://' + project.user + '@' + project.host + ' -privatekey=""' + project.ppkpath + '""" "keepuptodate ""' + project.localpath + '"" ""' + project.remotepath + '"" -filemask=""|.git/"" -delete"';
       console.log ('Executing: ' + cmd);
       var child = exec (cmd, function (error, stdout, stderr) {
         if (error) { throw (error); }
