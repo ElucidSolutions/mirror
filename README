@@ -5,7 +5,7 @@ The Mirror utility can be used to mirror local directories on remote
 servers over SFTP using WinSCP. When run, this utility will fork a
 WinSCP process for each connection listed in mirror.json. These
 WinSCP processes will monitor the local directory that they are
-associated with for any changes and immediately sync mirror those
+associated with for any changes and immediately mirror those
 changes in the associated remote directory.
 
 This program provides a webinterface on port 3000. You can view, start,
@@ -22,8 +22,8 @@ Tips
 
    It is possible to specify a set of default file masks in WinSCP and
    have them applied automatically whenever mirror is run. This can be
-   usefully for example when dealing with binary files or when a project
-   is under Git version control. To create a default file mask:
+   useful when dealing with binary files or projects under Git version
+   control. To create a default file mask:
 
       1. Open WinSCP.
       2. On the Login screen, click the Tools button and select Preferences.
