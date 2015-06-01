@@ -6,6 +6,9 @@ var CONNECTION_STATUS_STOPPED = 'Stopped';
 var CONNECTION_STATUS_RUNNING = 'Running';
 
 /*
+  Sends an HTTP Get request to /connections, retrieves a
+  list of the registered connections, and then displays 
+  them within the connections table.
 */
 $(document).ready (function () {
   setInterval (
@@ -25,6 +28,8 @@ $(document).ready (function () {
 });
 
 /*
+  Accepts a Connection object and returns an HTML
+  tr element that represents it.
 */
 function renderConnection (connection) {
   return $('<tr></tr>')
