@@ -5,10 +5,12 @@
 
 // I. Import libraries.
 
+var async         = require ('async');
 var child_process = require ('child_process');
-var express = require ('express');
-var fs      = require ('fs');
-var path    = require ('path');
+var express       = require ('express');
+var fs            = require ('fs');
+var path          = require ('path');
+var os            = require ('os');
 
 // II. Set global variables.
 
@@ -19,7 +21,6 @@ var CONNECTION_STATUS_RUNNING = 'Running';
 var CONFIG_FILE_PATH = 'mirror.json';
 var WINSCP = 'WinSCP';
 var CONNECTIONS = [];
-
 
 // III. Create the User Interface.
 
@@ -67,7 +68,8 @@ app.get ('/connections',
         local_path:  connection.local_path,
         remote_path: connection.remote_path,
         remote_host: connection.remote_host,
-        remote_user: connection.remote_user
+        remote_user: connection.remote_user,
+        filter:      connection.filter
       });
     });
 
@@ -129,14 +131,38 @@ function getConnectionByName (name) {
 }
 
 /*
-  startConnection accepts a Connection object and
+*/
+function startConnection (connection) {
+  os.platform ().match (/windows/i) ?
+    winscp_start (connection) :
+    rsync_start (connection) ;
+}
+
+/*
+*/
+function stopConnection (connection) {
+  os.platform ().match (/windows/i) ?
+    winscp_stop (connection) :
+    rsync_stop (connection) ;
+}
+
+/*
+  Starts the User Interface within the default browser.
+  Note this command only works under Windows.
+*/
+function startUI () {
+  child_process.exec ('start http://localhost:3000');
+}
+
+/*
+  winscp_start accepts a Connection object and
   starts a new WinSCP process to connect to the
   remote host and mirror the connection's local
   and remote directories. This function also
   updates the Connection object's status, and
   registers event handlers for the WinSCP process.
 */
-function startConnection (connection) {
+function winscp_start (connection) {
   console.log ('Starting a connection to: ' + connection.name + ' ' + WINSCP);
   connection.status = CONNECTION_STATUS_RUNNING;
   connection.process = child_process.spawn (WINSCP, ['sftp://' + connection.remote_user + '@' + connection.remote_host, '/privatekey=' + connection.ppkpath, '/keepuptodate', connection.local_path, connection.remote_path, '/defaults']);
@@ -151,19 +177,54 @@ function startConnection (connection) {
 }
 
 /*
-  stopConnection accepts a Connection object and
+  rsync_start accepts a Connection object and uses
+  Rsync to mirror the local path on the remote
+  host.
+*/
+function rsync_start (connection) {
+  console.log ('rsync_start: ' + connection.name);
+  async.forever (
+    function (next) {
+      setTimeout (
+        function () {
+          if (connection.stop) {
+            console.log ('The connection to ' + connection.name + ' has ended.');
+            connection.stop = false;
+            connection.status = CONNECTION_STATUS_STOPPED;
+            return;
+          }
+          console.log ('Mirroring rsync: ' + connection.name);
+          connection.stop = false;
+          connection.status = CONNECTION_STATUS_RUNNING;
+          var cmd = 'rsync --delete --verbose --recursive --filter="' + connection.filter + '" "' + connection.local_path + '" "' + connection.remote_user + '@' + connection.remote_host + ':' + connection.remote_path + '"';
+          console.log ('cmd: "' + cmd + '"');
+          child_process.exec (cmd,
+            function (error, stdout, stderr) {
+              console.log ('[stdout] ' + stdout);
+              if (error) {
+                console.log ('Error: ' + stderr);
+                connection.status = CONNECTION_STATUS_ERROR;
+                return;
+              }
+              next (null, connection);
+          });
+        },
+        5000
+      );
+  });
+}
+
+/*
+  winscp_stop accepts a Connection object and
   sends a TERM signal to the WinSCP process
   handling the connection.
 */
-function stopConnection (connection) {
-  console.log ('Killing process: ' + connection.process.pid);
+function winscp_stop (connection) {
   connection.process.kill ();
 }
 
 /*
-  Starts the User Interface within the default browser.
-  Note this command only works under Windows.
 */
-function startUI () {
-  child_process.exec ('start http://localhost:3000');
+function rsync_stop (connection) {
+  connection.stop = true;
 }

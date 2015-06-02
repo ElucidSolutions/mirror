@@ -2,19 +2,12 @@
   "winscp": "C:\\Program Files (x86)\\WinSCP\\WinSCP.exe",
   "connections": [
     {
-      "name":       "elucid_sso",
-      "local_path":  "C:\\Users\\larry_lee\\My Documents\\GitHub\\elucid_sso",
-      "remote_path": "/home/ubuntu/elucid_sso/larry_lee.auth.elucidsolutions.com",
-      "remote_user": "ubuntu",
-      "remote_host": "52.4.197.127",
-      "ppkpath":     "C:\\cygwin\\home\\larry_lee\\.ssh\\gsa staging.ppk"
-    },
-    {
       "name":       "vendor-release-notes",
-      "local_path":  "C:\\Users\\larry_lee\\My Documents\\GitHub\\vendor-release-notes",
+      "local_path":  "/home/larry_lee/Projects/vendor-release-notes/vendor-release-notes/",
       "remote_path": "/var/lib/tomcat7/dev.vendor-release-notes.elucidsolutions.com/ROOT",
       "remote_user": "ubuntu",
       "remote_host": "54.174.191.51",
-      "ppkpath":     "C:\\cygwin\\home\\larry_lee\\.ssh\\gsa staging.ppk"
+      "ppkpath":     "C:\\cygwin\\home\\larry_lee\\.ssh\\gsa staging.ppk",
+      "filter":      "- .git/"
     }
 ]}

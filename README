@@ -18,7 +18,7 @@ specification.
 Tips
 ====
 
-1. Default File Masks
+1. Default File Masks in WinSCP (Windows)
 
    It is possible to specify a set of default file masks in WinSCP and
    have them applied automatically whenever mirror is run. This can be
@@ -33,6 +33,11 @@ Tips
          File Mask text area.
       6. Click the OK button to save your changes.
 
+2. Local File Paths in Rsync (Linux)
+
+   The local_path directory must end in a backslash when using Mirror 
+   under Linux. Rsync will only copy the contents of local_path to
+   remote_path if it ends in a backslash. 
 
 Known Issues
 ============
