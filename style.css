@@ -13,9 +13,7 @@ body {
   height: 100px; }
 
 #title {
-  display: inline;
-  position: relative;
-  top: -30px; }
+  display: inline; }
 
 #body {
   padding: 0em 5em 5em 5em; }
