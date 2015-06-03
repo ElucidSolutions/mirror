@@ -1,8 +1,9 @@
 body {
-  background-color: grey; }
+  background-image: url("/images/background.jpg"); }
 
 #main-content {
-  background-color: white; }
+  background-color: rgba(255, 255, 255, 0.5);
+  margin: 1em; }
 
 #header {
   padding: 1em; }
