@@ -2,9 +2,9 @@ Mirror Readme
 =============
 
 The Mirror utility can be used to mirror local directories on remote
-servers over SFTP using WinSCP. When run, this utility will fork a
-WinSCP process for each connection listed in mirror.json. These
-WinSCP processes will monitor the local directory that they are
+servers over using rsync. When run, this utility will periodically
+fork a rsync process for each connection listed in mirror.json. These
+rsync processes will scan the local directory that they are
 associated with for any changes and immediately mirror those
 changes in the associated remote directory.
 
@@ -18,39 +18,23 @@ specification.
 Tips
 ====
 
-1. Default File Masks in WinSCP (Windows)
-
-   It is possible to specify a set of default file masks in WinSCP and
-   have them applied automatically whenever mirror is run. This can be
-   useful when dealing with binary files or projects under Git version
-   control. To create a default file mask:
-
-      1. Open WinSCP.
-      2. On the Login screen, click the Tools button and select Preferences.
-      3. On the Preferences screen, select Transfer in the left-most menu.
-      4. Click the Edit button in the dialogue window.
-      5. On the Transfer Settings screen, enter your file masks in the
-         File Mask text area.
-      6. Click the OK button to save your changes.
-
-2. Local File Paths in Rsync (Linux)
+1. Local File Paths in Rsync (Linux)
 
    The local_path directory must end in a backslash when using Mirror 
    under Linux. Rsync will only copy the contents of local_path to
    remote_path if it ends in a backslash. 
 
+2. Using Identity Files
+
+   Amazon web services uses SSH identity files for user
+   authentication. Unlike SSH, Rsync does not have a flag through
+   which an identity file can be given. Rsync however, uses SSH
+   to connect to remote servers and will respect any settings in
+   the ~/.ssh/config file. Add an "IdentityFile FILE" directive to
+   those hosts that require one.
+
 Known Issues
 ============
-
-1. The user interface only displays an error when WinSCP terminates and
-   returns an error code. WinSCP may stop mirroring a directory without
-   terminating and may even return "successful" after closing due to
-   an error. Moreover, the user interface only lists a connection as
-   "Stopped" if the WinSCP process that was handling the connection has
-   terminated. WinSCP may stop mirroring a directory without closing.
-   In which case, the user interface will continue to list the
-   connection as "Running". As a result, the status displayed in the
-   user interface may be incorrect.
 
 Author
 ======

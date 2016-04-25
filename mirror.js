@@ -65,6 +65,7 @@ app.get ('/connections',
       connections.push ({
         name:        connection.name,
         status:      connection.status,
+        delete:      connection.delete,
         local_path:  connection.local_path,
         remote_path: connection.remote_path,
         remote_host: connection.remote_host,
@@ -178,7 +179,7 @@ function rsync_start (connection) {
           console.log ('Mirroring rsync: ' + connection.name);
           connection.stop = false;
           connection.status = CONNECTION_STATUS_RUNNING;
-          var cmd = 'rsync --delete --verbose --recursive --filter="' + connection.filter + '" "' + connection.local_path + '" "' + connection.remote_user + '@' + connection.remote_host + ':' + connection.remote_path + '"';
+          var cmd = 'rsync ' + (connection.delete ? '--delete ' : '') + '--verbose --recursive --filter="' + connection.filter + '" "' + connection.local_path + '" "' + connection.remote_user + '@' + connection.remote_host + ':' + connection.remote_path + '"';
           console.log ('cmd: "' + cmd + '"');
           child_process.exec (cmd,
             {maxBuffer: 1024 * 500},

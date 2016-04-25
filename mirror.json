@@ -1,11 +1,12 @@
 {
   "connections": [
     {
-      "name":       "Guides",
-      "local_path":  "/home/larry_lee/Projects/guides/fpt.elucidsolutions.com/",
-      "remote_path": "/usr/local/httpd/httpd-2.4.12/htdocs/staging.fpt.elucidsolutions.com",
+      "name":        "BLM",
+      "delete":      false,
+      "local_path":  "/home/larry_lee/Projects/blm/blm.elucidsolutions.com/",
+      "remote_path": "/usr/local/httpd/httpd-2.4.12/htdocs/dev.blm.elucidsolutions.com",
       "remote_user": "ubuntu",
-      "remote_host": "52.4.197.127",
+      "remote_host": "52.5.193.67",
       "filter":      "- .git/"
     }
 ]}
