@@ -1,6 +1,8 @@
 /*
-  The filesync script uses the WinSCP utility to mirror local project
-  directories on remote servers.
+  The filesync script uses the rsync
+  (https://en.wikipedia.org/wiki/Rsync) utility
+  to mirror local project directories on remote
+  servers.
 */
 
 // I. Import libraries.
@@ -19,7 +21,6 @@ var CONNECTION_STATUS_STOPPED = 'Stopped';
 var CONNECTION_STATUS_RUNNING = 'Running';
 
 var CONFIG_FILE_PATH = 'mirror.json';
-var WINSCP = 'WinSCP';
 var CONNECTIONS = [];
 
 // III. Create the User Interface.
@@ -37,7 +38,6 @@ app.listen (3000);
 
       // 2. Parse the configuration file.
       var settings = JSON.parse (file);
-      WINSCP = settings.winscp;
       CONNECTIONS = settings.connections;
 
       // 3. Start each connection.
@@ -80,7 +80,7 @@ app.get ('/connections',
   Handles GET requests for /start.
   This handler expects a single query parameter,
   name, finds the connection in CONNECTIONS that
-  has the given name, and starts a WinSCP process
+  has the given name, and starts an Async task
   to mirror the connection's local and remote
   directories.
 */
@@ -98,7 +98,7 @@ app.get ('/start',
   Handles GET requests for /stop.
   This handler expects a single query parameter,
   name, finds the connection in CONNECTIONS that
-  has the given name, and stops the WinSCP process
+  has the given name, and stops the Async task
   that is mirroring the connection's local and
   remote directories.
 */
@@ -131,19 +131,23 @@ function getConnectionByName (name) {
 }
 
 /*
+  startConnection accepts a Connection object
+  that represents a potential connection and
+  attempts to create an Async task to manage
+  the connection.
 */
 function startConnection (connection) {
-  os.platform ().match (/windows/i) ?
-    winscp_start (connection) :
-    rsync_start (connection) ;
+  rsync_start (connection);
 }
 
 /*
+  stopConnection accepts a Connection object
+  that represents a connection and signals to
+  any Async tasks handling the connection that
+  they should stop.
 */
 function stopConnection (connection) {
-  os.platform ().match (/windows/i) ?
-    winscp_stop (connection) :
-    rsync_stop (connection) ;
+  rsync_stop (connection);
 }
 
 /*
@@ -152,28 +156,6 @@ function stopConnection (connection) {
 */
 function startUI () {
   child_process.exec ('start http://localhost:3000');
-}
-
-/*
-  winscp_start accepts a Connection object and
-  starts a new WinSCP process to connect to the
-  remote host and mirror the connection's local
-  and remote directories. This function also
-  updates the Connection object's status, and
-  registers event handlers for the WinSCP process.
-*/
-function winscp_start (connection) {
-  console.log ('Starting a connection to: ' + connection.name + ' ' + WINSCP);
-  connection.status = CONNECTION_STATUS_RUNNING;
-  connection.process = child_process.spawn (WINSCP, ['sftp://' + connection.remote_user + '@' + connection.remote_host, '/privatekey=' + connection.ppkpath, '/keepuptodate', connection.local_path, connection.remote_path, '/defaults']);
-  connection.process.stdout.on ('data', function (data) { console.log ('[stdout] ' + data); });
-  connection.process.stderr.on ('data', function (data) { console.log ('[stderr] ' + data); });
-  connection.process.on ('close', function (code, signal) {
-    console.log ('The connection to ' + connection.name + ' has ended. code: ' + JSON.stringify (code));
-    code && code !== 0 ?
-      connection.status = CONNECTION_STATUS_ERROR :
-      connection.status = CONNECTION_STATUS_STOPPED ;
-  });
 }
 
 /*
@@ -199,10 +181,11 @@ function rsync_start (connection) {
           var cmd = 'rsync --delete --verbose --recursive --filter="' + connection.filter + '" "' + connection.local_path + '" "' + connection.remote_user + '@' + connection.remote_host + ':' + connection.remote_path + '"';
           console.log ('cmd: "' + cmd + '"');
           child_process.exec (cmd,
+            {maxBuffer: 1024 * 500},
             function (error, stdout, stderr) {
               console.log ('[stdout] ' + stdout);
               if (error) {
-                console.log ('Error: ' + stderr);
+                console.log ('Error: "' + error + '" stderr: "' + stderr + '"');
                 connection.status = CONNECTION_STATUS_ERROR;
                 return;
               }
@@ -215,15 +198,9 @@ function rsync_start (connection) {
 }
 
 /*
-  winscp_stop accepts a Connection object and
-  sends a TERM signal to the WinSCP process
-  handling the connection.
-*/
-function winscp_stop (connection) {
-  connection.process.kill ();
-}
-
-/*
+  Accepts a Connection object that represents
+  a connection and signals to any Async tasks
+  handling the connection that they should stop.
 */
 function rsync_stop (connection) {
   connection.stop = true;

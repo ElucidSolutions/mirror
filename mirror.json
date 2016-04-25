@@ -1,13 +1,11 @@
 {
-  "winscp": "C:\\Program Files (x86)\\WinSCP\\WinSCP.exe",
   "connections": [
     {
-      "name":       "vendor-release-notes",
-      "local_path":  "/home/larry_lee/Projects/vendor-release-notes/vendor-release-notes/",
-      "remote_path": "/var/lib/tomcat7/dev.vendor-release-notes.elucidsolutions.com/ROOT",
+      "name":       "Guides",
+      "local_path":  "/home/larry_lee/Projects/guides/fpt.elucidsolutions.com/",
+      "remote_path": "/usr/local/httpd/httpd-2.4.12/htdocs/staging.fpt.elucidsolutions.com",
       "remote_user": "ubuntu",
-      "remote_host": "54.174.191.51",
-      "ppkpath":     "C:\\cygwin\\home\\larry_lee\\.ssh\\gsa staging.ppk",
+      "remote_host": "52.4.197.127",
       "filter":      "- .git/"
     }
 ]}
