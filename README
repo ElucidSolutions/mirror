@@ -26,12 +26,21 @@ Tips
 
 2. Using Identity Files
 
-   Amazon web services uses SSH identity files for user
+   Amazon Web Services (AWS) uses SSH identity files for user
    authentication. Unlike SSH, Rsync does not have a flag through
    which an identity file can be given. Rsync however, uses SSH
    to connect to remote servers and will respect any settings in
    the ~/.ssh/config file. Add an "IdentityFile FILE" directive to
    those hosts that require one.
+   
+   Example:
+   
+     Host 54.4.197.127
+     User ubuntu
+     IdentityFile ~/.ssh/example.pem
+
+   Where example.pem is the PEM file provided by AWS.
+
 
 Known Issues
 ============
