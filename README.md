@@ -35,9 +35,11 @@ Tips
    
    Example:
    
-   >  Host 54.4.197.127
-   >  User ubuntu
-   >  IdentityFile ~/.ssh/example.pem
+   ```
+     Host 54.4.197.127
+     User ubuntu
+     IdentityFile ~/.ssh/example.pem
+   ```
 
    Where example.pem is the PEM file provided by AWS.
 
